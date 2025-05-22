@@ -1,0 +1,203 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{geometry}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{enumitem}
+
+\geometry{margin=2.5cm}
+\pagestyle{fancy}
+\fancyhead[L]{Spring 2024–2025}
+\fancyhead[R]{BioData ML App}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\title{\textbf{Molecular Biology Data Analysis with Streamlit and Docker}}
+\author{Alexandros Sinekidis, inf2022186     \\ 
+Nikoletta Hadjiangeli, inf2022241    \\
+Thomas Nakos, inf2022141    \\
+Department of Informatics \\
+Academic Year: 2024-2025
+}
+\date{May 2025}
+
+\begin{document}
+
+\maketitle
+\begin{figure}[H] 
+  \centering
+  \includegraphics[width=0.4\textwidth]{Ionian_University_seal.jpg} 
+  \caption{Ionian University logo.}
+  \label{fig:university-logo}
+\end{figure}
+\thispagestyle{empty}
+
+\begin{abstract}
+This project presents the development of an interactive application in \textbf{Streamlit} for molecular biology data analysis. The application includes functionalities for \textit{PCA}, \textit{Clustering}, \textit{Volcano Plot}, and processing of the COVID-19 dataset. Additionally, execution via \textbf{Docker} is provided, ensuring portability and independence from local settings. The objective is to simplify exploratory data analysis workflows in molecular biology through intuitive interfaces and interactive visualizations.
+\end{abstract}
+
+\section{Introduction}
+The rapid increase of biological data due to high-throughput technologies like RNA-seq, microarrays, and single-cell sequencing has created a need for intuitive and extensible analysis tools. Researchers without strong programming backgrounds often find traditional scripting-based tools (like R or Python) to be a barrier to efficient data interpretation.
+
+Our solution leverages the Streamlit framework to create an interactive web-based platform for molecular data analysis, integrating key machine learning (ML) and statistical tools in a user-friendly manner. Containerization with Docker ensures that the environment remains consistent across different systems and eliminates the "it works on my machine" problem.
+
+The main goals of this project are:
+\begin{itemize}
+    \item To facilitate gene expression data analysis through an accessible GUI.
+    \item To visualize complex relationships (via PCA and Clustering).
+    \item To identify and interpret differentially expressed genes (via Volcano Plot).
+    \item To ensure reproducibility and ease of deployment via Docker.
+\end{itemize}
+
+\section{Implementation Design}
+
+The application is modular and split into four primary functionalities:
+\begin{enumerate}[label=\arabic*.]
+    \item \textbf{PCA Analysis}: Dimensionality reduction and visualization of expression data to identify major patterns.
+    \item \textbf{Clustering}: Grouping samples or genes based on similarity, often used for subtype discovery.
+    \item \textbf{Volcano Plot}: Visualization of gene expression changes (log2 fold change vs statistical significance).
+    \item \textbf{COVID-19 Dataset Viewer}: Exploration of curated COVID-19 gene expression data.
+\end{enumerate}
+
+\subsection*{Technological Stack}
+\begin{itemize}
+    \item \textbf{Frontend}: Implemented in Streamlit, allowing rapid UI prototyping.
+    \item \textbf{Backend}: Uses pandas for data handling, scikit-learn for ML, seaborn/matplotlib for plotting.
+    \item \textbf{Data Input}: Supports multiple file types including `.csv`, `.tsv`, `.xlsx`, `.txt`.
+\end{itemize}
+
+Streamlit widgets allow users to:
+\begin{itemize}
+    \item Upload data files.
+    \item Choose PCA dimensions (e.g., PC1 vs PC2).
+    \item Set cluster number for k-means.
+    \item Define thresholds for log2FC and p-value cutoffs.
+\end{itemize}
+
+\section{UML Diagrams}
+\subsection{Use Case Diagram}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{usecase.png}
+\caption{Use Case diagram of the application}
+\end{figure}
+
+The use case diagram emphasizes the role of the user in initiating and configuring the analysis pipeline. Customization before execution allows for flexibility in exploration.
+
+\subsection{Component Diagram}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.3\textwidth]{component.png}
+\caption{Component diagram of the application's architecture}
+\end{figure}
+
+\textbf{Data Flow Summary:}
+\begin{itemize}
+    \item Input → Preprocessing → Analysis → Visualization
+    \item The results can be exported or stored in memory for chaining analyses.
+\end{itemize}
+
+The modular nature makes it easy to add future features (e.g., Heatmaps, t-SNE, Gene Ontology).
+
+\section{Implementation Analysis}
+
+The implementation is handled via a single `app.py` script organized using tabs and sidebars. Key modules and their responsibilities are:
+
+\subsection*{Preprocessing}
+\begin{itemize}
+    \item Detects numerical columns.
+    \item Handles missing values via imputation.
+    \item Standardizes the data using \texttt{StandardScaler}.
+\end{itemize}
+
+\subsection*{PCA Module}
+\begin{itemize}
+    \item Computes principal components.
+    \item Allows 2D/3D visualization.
+    \item Supports explained variance ratio plots.
+\end{itemize}
+
+\subsection*{Clustering Module}
+\begin{itemize}
+    \item Uses k-means clustering.
+    \item Projects data via PCA before clustering.
+    \item Supports silhouette score output (optional).
+\end{itemize}
+
+\subsection*{Volcano Plot}
+\begin{itemize}
+    \item Visualizes up- and down-regulated genes.
+    \item User-defined log2FC and p-value thresholds.
+    \item Highlights significant genes in color.
+\end{itemize}
+
+\subsection*{COVID-19 Dataset}
+\begin{itemize}
+    \item Pre-loaded dataset from public COVID-19 research.
+    \item Filter by condition (infected vs control).
+    \item Display summary statistics and sample metadata.
+\end{itemize}
+
+\section{Result Visualizations}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.45\textwidth]{pca_plot.png}
+\includegraphics[width=0.45\textwidth]{volcano.png}
+\caption{Left: PCA plot. Right: Volcano plot with log2FC and p-values}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{cluster_plot.png}
+\caption{Clustering (k-means) projection in 2D space via PCA}
+\end{figure}
+
+The visual output allows researchers to:
+\begin{itemize}
+    \item Detect sample outliers.
+    \item Identify gene expression trends.
+    \item Assess clustering quality.
+    \item Focus on biologically relevant gene subsets.
+\end{itemize}
+
+\section{Dockerization}
+
+Docker provides a reproducible runtime environment. All dependencies are encapsulated within a container, preventing version mismatches.
+
+\subsection*{Included Files}
+\begin{itemize}
+    \item \texttt{Dockerfile} – Defines the build process.
+    \item \texttt{requirements.txt} – Streamlit, numpy, pandas, seaborn, etc.
+    \item \texttt{.dockerignore} – Ignores unnecessary files during build.
+\end{itemize}
+
+\subsection*{Usage Instructions}
+\begin{verbatim}
+docker build -t gene-app .
+docker run -p 8501:8501 gene-app
+\end{verbatim}
+
+\section{GitHub Repository}
+The full codebase, example data, screenshots, and environment configuration are available on GitHub:
+
+\url{https://github.com/banana-babap/Gene-Expression-Analysis-App-on-Python-Streamlit}
+
+The repository includes:
+\begin{itemize}
+    \item Annotated source code.
+    \item Sample datasets.
+    \item Instructions for both Docker and manual installation.
+\end{itemize}
+
+\section{Conclusion}
+
+This project demonstrates how a modern data science stack can streamline complex bioinformatics workflows. Through Streamlit, we have enabled non-programmers to explore molecular data interactively, while Docker ensures reproducibility and seamless deployment. 
+Ultimately, this application bridges the gap between computational biology and accessibility, offering a scalable, open-source tool for the research community.
+
+\end{document}
